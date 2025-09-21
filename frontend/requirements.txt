@@ -1,0 +1,43 @@
+# Frontend Requirements - Car ERP System
+# This file lists all the npm dependencies required for the frontend
+
+# Core React Framework
+react@^18.2.0
+react-dom@^18.2.0
+react-scripts@5.0.1
+
+# Routing & Navigation
+react-router-dom@^6.8.1
+
+# HTTP Client & API Communication
+axios@^1.6.2
+
+# State Management & Data Fetching
+react-query@^3.39.3
+
+# Form Handling
+react-hook-form@^7.48.2
+
+# UI Components & Icons
+lucide-react@^0.294.0
+react-hot-toast@^2.4.1
+
+# Data Visualization
+recharts@^2.8.0
+
+# Utility Libraries
+date-fns@^2.30.0
+web-vitals@^2.1.4
+
+# Development Dependencies (install with --save-dev)
+# tailwindcss@^3.3.6
+# autoprefixer@^10.4.16
+# postcss@^8.4.32
+# @testing-library/jest-dom@^5.17.0
+# @testing-library/react@^13.4.0
+# @testing-library/user-event@^13.5.0
+
+# Installation Instructions:
+# 1. Make sure Node.js 16+ is installed
+# 2. Run: npm install
+# 3. For development dependencies: npm install --save-dev tailwindcss@^3.3.6 autoprefixer@^10.4.16 postcss@^8.4.32 @testing-library/jest-dom@^5.17.0 @testing-library/react@^13.4.0 @testing-library/user-event@^13.5.0
