@@ -104,9 +104,6 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile.prod
-    command: npm run build && npx serve -s build -l 3000
-    volumes:
-      - /app/node_modules
     depends_on:
       - backend
     restart: unless-stopped

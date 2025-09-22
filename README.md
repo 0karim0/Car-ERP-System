@@ -71,49 +71,86 @@ A comprehensive Enterprise Resource Planning (ERP) system designed specifically 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker and Docker Compose
+- Docker and Docker Compose (v1.29+)
+- Node.js 18+ and npm (for local frontend development)
+- Python 3.11+ (for local backend development)
 - Git
 
-### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd car-erp-system
-   ```
+### Run Locally (using Docker Compose)
 
-2. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   ```
-   
-   Edit the `.env` file with your configuration:
-   ```env
-   SECRET_KEY=your-secret-key-here
-   DEBUG=True
-   DB_NAME=car_erp
-   DB_USER=postgres
-   DB_PASSWORD=password
-   ADMIN_EMAIL=admin@carerp.com
-   ADMIN_PASSWORD=admin123
-   ```
+1. Copy environment template and edit values:
 
-3. **Start the application**
-   ```bash
-   docker-compose up --build
-   ```
+```powershell
+copy env.example .env
+notepad .env
+```
 
-4. **Initialize the database**
-   ```bash
-   # Wait for containers to be ready, then run:
-   docker-compose exec backend python manage.py migrate
-   docker-compose exec backend python manage.py setup_initial_data
-   ```
+2. Build and start services:
 
-5. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/swagger/
+```powershell
+docker-compose up --build
+```
+
+3. Initialize the application (run inside backend container):
+
+```powershell
+docker-compose exec backend python manage.py migrate
+docker-compose exec backend python manage.py setup_initial_data
+```
+
+4. Access services:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8000`
+- API Docs: `http://localhost:8000/swagger/`
+
+
+### Run Locally (without Docker) - Backend
+
+```powershell
+cd car_erp_backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+copy ..\env.example .env
+# edit .env as needed
+python manage.py migrate
+python manage.py setup_initial_data
+python manage.py runserver
+```
+
+### Run Locally (without Docker) - Frontend
+
+```powershell
+cd frontend
+npm install
+npm start
+```
+
+
+### Production (Docker Compose)
+
+1. Copy and edit `.env` for production values (set `DEBUG=False`, proper `SECRET_KEY`, and database credentials).
+
+2. Use production compose file:
+
+```powershell
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+3. Run migrations and collectstatic on the backend container:
+
+```powershell
+docker-compose exec backend python manage.py migrate
+docker-compose exec backend python manage.py collectstatic --noinput
+```
+
+
+### Troubleshooting
+- If containers fail to start, run `docker-compose logs <service>` to inspect logs.
+- If frontend cannot reach backend when using Docker, ensure `REACT_APP_API_URL` is `http://backend:8000` in `docker-compose.yml` (this repo is already configured).
+- If you see database connection errors, confirm Postgres container is healthy and credentials in `.env` match.
 
 ### Default Login Credentials
 
@@ -343,6 +380,34 @@ car-erp-system/
    docker-compose exec backend python manage.py migrate
    docker-compose exec backend python manage.py collectstatic --noinput
    ```
+
+**Production Checklist & Validation**
+
+- Ensure `.env` values are set and safe (especially `SECRET_KEY`, DB credentials, and `ADMIN_PASSWORD`).
+- Set `DEBUG=False` and configure `ALLOWED_HOSTS` with your domain(s).
+- Ensure TLS certificates are configured for `nginx/ssl` when exposing HTTPS ports (the repo includes placeholder paths).
+- After deployment, validate:
+  - `http(s)://your-domain/health` returns 200.
+  - `http(s)://your-domain/swagger/` loads API docs.
+  - `http(s)://your-domain/admin/` is reachable and secure.
+
+**Validation Commands**
+
+```powershell
+# View backend logs
+docker-compose -f docker-compose.prod.yml logs -f backend
+
+# Run migrations and create initial data
+docker-compose -f docker-compose.prod.yml exec backend python manage.py migrate
+docker-compose -f docker-compose.prod.yml exec backend python manage.py setup_initial_data
+
+# Collect static files
+docker-compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
+```
+
+**Notes & Next Steps**
+- I could not run `npm` or locally build Docker images in this environment; please run `npm ci` and `docker-compose up --build` locally to verify builds.
+- If you want, I can prepare a healthcheck script, add GitHub Actions CI to run lint/builds, or help with TLS automation (Let's Encrypt) for production.
 
 ## 📝 License
 
